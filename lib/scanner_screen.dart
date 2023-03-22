@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'result_screen.dart';
 
 class ScannerScreen extends StatefulWidget {
-  const ScannerScreen({super.key});
+  int types = 0;
+  ScannerScreen({super.key, required this.types});
 
   @override
   State<ScannerScreen> createState() => _ScannerScreenState();
@@ -42,7 +43,11 @@ class _ScannerScreenState extends State<ScannerScreen>
     DBRRuntimeSettings currentSettings =
         await _barcodeReader.getRuntimeSettings();
     // Set the barcode format to read.
-    currentSettings.barcodeFormatIds = EnumBarcodeFormat.BF_DATAMATRIX;
+    if (widget.types != 0) {
+      currentSettings.barcodeFormatIds = widget.types;
+    } else {
+      currentSettings.barcodeFormatIds = EnumBarcodeFormat.BF_ALL;
+    }
 
     // currentSettings.minResultConfidence = 70;
     // currentSettings.minBarcodeTextLength = 50;
@@ -123,7 +128,7 @@ class _ScannerScreenState extends State<ScannerScreen>
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Barcode Scanner'),
+          title: const Text('Batch/Inventory'),
         ),
         body: Stack(
           children: [
@@ -139,8 +144,8 @@ class _ScannerScreenState extends State<ScannerScreen>
             ),
             Positioned(
                 bottom: 50,
-                left: 0,
-                right: 0,
+                left: 50,
+                right: 50,
                 child: Container(
                   width: 64,
                   height: 64,

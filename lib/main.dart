@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'scanner_screen.dart';
+import 'settings_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -50,10 +51,14 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  int _types = 0;
   void _launchCamera() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => ScannerScreen()),
+      MaterialPageRoute(
+          builder: (context) => ScannerScreen(
+                types: _types,
+              )),
     );
   }
 
@@ -70,6 +75,18 @@ class _MyHomePageState extends State<MyHomePage> {
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () async {
+              var result = await Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const SettingsScreen()),
+              );
+              _types = result['format'];
+            },
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _launchCamera,

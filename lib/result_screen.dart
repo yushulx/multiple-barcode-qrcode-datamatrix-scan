@@ -16,7 +16,7 @@ class _ResultScreenState extends State<ResultScreen> {
     // TODO: implement build
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Barcode Scanner'),
+          title: const Text('Scan Results'),
         ),
         body: ListView.builder(
             itemCount: widget.results.length,
