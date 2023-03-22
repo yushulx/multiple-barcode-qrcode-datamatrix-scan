@@ -17,16 +17,42 @@ class _ResultScreenState extends State<ResultScreen> {
     return Scaffold(
         appBar: AppBar(
           title: const Text('Scan Results'),
+          actions: [
+            ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text('Close'))
+          ],
         ),
-        body: ListView.builder(
-            itemCount: widget.results.length,
-            itemBuilder: (context, index) {
-              return ListTile(
-                title: Text(
-                    '${index}: ${widget.results.values.elementAt(index).barcodeText}'),
-                subtitle: Text(
-                    widget.results.values.elementAt(index).barcodeFormatString),
-              );
-            }));
+        body: Stack(
+          children: [
+            ListView.builder(
+                itemCount: widget.results.length,
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    title: Text(
+                        '${index}: ${widget.results.values.elementAt(index).barcodeText}'),
+                    subtitle: Text(widget.results.values
+                        .elementAt(index)
+                        .barcodeFormatString),
+                  );
+                }),
+            Positioned(
+                bottom: 50,
+                left: 50,
+                right: 50,
+                child: SizedBox(
+                  width: 64,
+                  height: 64,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text('SCAN AGAIN'),
+                  ),
+                ))
+          ],
+        ));
   }
 }
