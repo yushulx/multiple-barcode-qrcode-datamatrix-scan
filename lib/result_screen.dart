@@ -27,17 +27,26 @@ class _ResultScreenState extends State<ResultScreen> {
         ),
         body: Stack(
           children: [
-            ListView.builder(
-                itemCount: widget.results.length,
-                itemBuilder: (context, index) {
-                  return ListTile(
-                    title: Text(
-                        '${index}: ${widget.results.values.elementAt(index).barcodeText}'),
-                    subtitle: Text(widget.results.values
-                        .elementAt(index)
-                        .barcodeFormatString),
-                  );
-                }),
+            SizedBox(
+              height: MediaQuery.of(context).size.height,
+            ),
+            SizedBox(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height -
+                  200 -
+                  MediaQuery.of(context).padding.top,
+              child: ListView.builder(
+                  itemCount: widget.results.length,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      title: Text(
+                          '${index}: ${widget.results.values.elementAt(index).barcodeText}'),
+                      subtitle: Text(widget.results.values
+                          .elementAt(index)
+                          .barcodeFormatString),
+                    );
+                  }),
+            ),
             Positioned(
                 bottom: 50,
                 left: 50,

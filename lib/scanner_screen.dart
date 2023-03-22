@@ -98,9 +98,6 @@ class _ScannerScreenState extends State<ScannerScreen>
 
     await _cameraEnhancer.open();
 
-    // Enable video barcode scanning.
-    // If the camera is opened, the barcode reader will start the barcode decoding thread when you triggered the startScanning.
-    // The barcode reader will scan the barcodes continuously before you trigger stopScanning.
     _barcodeReader.startScanning();
   }
 
@@ -146,7 +143,7 @@ class _ScannerScreenState extends State<ScannerScreen>
                 bottom: 50,
                 left: 50,
                 right: 50,
-                child: Container(
+                child: SizedBox(
                   width: 64,
                   height: 64,
                   child: ElevatedButton(
