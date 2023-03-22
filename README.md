@@ -2,6 +2,10 @@
 
 A Flutter barcode scanner project for scanning multiple barcode, QR code and DataMatrix.
 
+## Supported Platforms
+- Android
+- iOS
+
 ## Getting Started
 
 1. Apply for a [trial license](https://www.dynamsoft.com/customer/license/trialLicense?product=dbr) of Dynamsoft Barcode Reader and update the `LICENSE-KEY` in `lib/scanner_screen.dart`.
@@ -14,3 +18,5 @@ A Flutter barcode scanner project for scanning multiple barcode, QR code and Dat
     ```bash
     flutter run
     ```
+
+    ![mobile multiple datamatrix scan](https://www.dynamsoft.com/codepool/img/2023/03/mobile-multiple-datamatrix-scan.jpg)
