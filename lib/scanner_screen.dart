@@ -1,9 +1,12 @@
 import 'package:dynamsoft_capture_vision_flutter/dynamsoft_capture_vision_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'result_screen.dart';
 import 'switch_provider.dart';
+
+import 'package:url_launcher/url_launcher_string.dart';
 
 class ScannerScreen extends StatefulWidget {
   int types = 0;
@@ -106,6 +109,29 @@ class _ScannerScreenState extends State<ScannerScreen>
     start();
   }
 
+  Widget createURLString(String text) {
+    // Create a regular expression to match URL strings.
+    RegExp urlRegExp = RegExp(
+      r'^(https?|http)://[^\s/$.?#].[^\s]*$',
+      caseSensitive: false,
+      multiLine: false,
+    );
+
+    if (urlRegExp.hasMatch(text)) {
+      return InkWell(
+        child: Text(
+          text,
+          style: const TextStyle(color: Colors.blue),
+        ),
+        onTap: () async {
+          launchUrlString(text);
+        },
+      );
+    } else {
+      return Text(text);
+    }
+  }
+
   Widget listItem(BuildContext context, int index) {
     BarcodeResult res = decodeRes[index];
 
@@ -113,8 +139,8 @@ class _ScannerScreenState extends State<ScannerScreen>
         textColor: Colors.white,
         // tileColor: Colors.green,
         child: ListTile(
-          title: Text(res.barcodeFormatString),
-          subtitle: Text(res.barcodeText),
+          title: Text(res.barcodeText),
+          subtitle: Text(res.barcodeFormatString),
         ));
   }
 
@@ -165,8 +191,8 @@ class _ScannerScreenState extends State<ScannerScreen>
                   itemCount: _results.length,
                   itemBuilder: (context, index) {
                     return ListTile(
-                      title: Text(
-                          '${index}: ${_results.values.elementAt(index).barcodeText}'),
+                      title: createURLString(
+                          _results.values.elementAt(index).barcodeText),
                       subtitle: Text(
                           _results.values.elementAt(index).barcodeFormatString),
                     );
@@ -201,10 +227,8 @@ class _ScannerScreenState extends State<ScannerScreen>
                           _scanButtonText = 'Start Scanning';
                           setState(() {});
                         } else {
-                          setState(() {
-                            _isScanning = true;
-                            _scanButtonText = 'Stop Scanning';
-                          });
+                          _isScanning = true;
+                          _scanButtonText = 'Stop Scanning';
                           start();
                         }
                       },
@@ -277,7 +301,6 @@ class _ScannerScreenState extends State<ScannerScreen>
               value: switchProvider.switchValue,
               onChanged: (newValue) {
                 switchProvider.switchValue = newValue;
-                setState(() {});
 
                 start();
               },
