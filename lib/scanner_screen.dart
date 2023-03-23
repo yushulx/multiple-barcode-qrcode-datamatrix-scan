@@ -1,7 +1,9 @@
 import 'package:dynamsoft_capture_vision_flutter/dynamsoft_capture_vision_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'result_screen.dart';
+import 'switch_provider.dart';
 
 class ScannerScreen extends StatefulWidget {
   int types = 0;
@@ -21,6 +23,11 @@ class _ScannerScreenState extends State<ScannerScreen>
   List<BarcodeResult> decodeRes = [];
   String? resultText;
   bool faceLens = false;
+
+  bool _isFlashOn = false;
+  bool _isScanning = true;
+  String _scanButtonText = 'Stop Scanning';
+  bool _isCameraReady = false;
 
   @override
   void initState() {
@@ -96,9 +103,7 @@ class _ScannerScreenState extends State<ScannerScreen>
       }
     });
 
-    await _cameraEnhancer.open();
-
-    _barcodeReader.startScanning();
+    start();
   }
 
   Widget listItem(BuildContext context, int index) {
@@ -121,60 +126,177 @@ class _ScannerScreenState extends State<ScannerScreen>
     super.dispose();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: const Text('Batch/Inventory'),
-        ),
-        body: Stack(
-          children: [
-            Container(
-              child: _cameraView,
-            ),
-            SizedBox(
-              height: 100,
+  Future<void> stop() async {
+    await _cameraEnhancer.close();
+    await _barcodeReader.stopScanning();
+  }
+
+  Future<void> start() async {
+    _isCameraReady = true;
+    setState(() {});
+
+    Future.delayed(const Duration(milliseconds: 100), () async {
+      _cameraView.overlayVisible = true;
+      await _barcodeReader.startScanning();
+      await _cameraEnhancer.open();
+    });
+  }
+
+  Widget createSwitchWidget(bool switchValue) {
+    if (!_isCameraReady) {
+      // Return loading indicator if camera is not ready yet.
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+    if (switchValue) {
+      return Stack(
+        children: [
+          Container(
+            color: Colors.white,
+          ),
+          Container(
+            height: MediaQuery.of(context).size.height -
+                200 -
+                MediaQuery.of(context).padding.top,
+            color: Colors.white,
+            child: Center(
               child: ListView.builder(
-                itemBuilder: listItem,
-                itemCount: decodeRes.length,
+                  itemCount: _results.length,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      title: Text(
+                          '${index}: ${_results.values.elementAt(index).barcodeText}'),
+                      subtitle: Text(
+                          _results.values.elementAt(index).barcodeFormatString),
+                    );
+                  }),
+            ),
+          ),
+          if (_isScanning)
+            Positioned(
+              top: 0,
+              right: 20,
+              child: SizedBox(
+                width: 160,
+                height: 160,
+                child: _cameraView,
               ),
             ),
-            Positioned(
-                bottom: 50,
-                left: 50,
-                right: 50,
-                child: SizedBox(
-                  width: 64,
-                  height: 64,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => ResultScreen(
-                                  results: _results,
-                                )),
-                      );
-                    },
-                    child: const Text('Done'),
-                  ),
-                ))
-          ],
-        ));
+          Positioned(
+            bottom: 50,
+            left: 50,
+            right: 50,
+            child: SizedBox(
+                width: MediaQuery.of(context).size.width * 0.5,
+                height: 64,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        if (_isScanning) {
+                          _isScanning = false;
+                          stop();
+                          _scanButtonText = 'Start Scanning';
+                          setState(() {});
+                        } else {
+                          setState(() {
+                            _isScanning = true;
+                            _scanButtonText = 'Stop Scanning';
+                          });
+                          start();
+                        }
+                      },
+                      child: Text(_scanButtonText),
+                    ),
+                    Center(
+                      child: IconButton(
+                        icon: const Icon(Icons.flash_on),
+                        onPressed: () {
+                          if (_isFlashOn) {
+                            _isFlashOn = false;
+                            _cameraEnhancer.turnOffTorch();
+                          } else {
+                            _isFlashOn = true;
+                            _cameraEnhancer.turnOnTorch();
+                          }
+                        },
+                      ),
+                    ),
+                  ],
+                )),
+          ),
+        ],
+      );
+    } else {
+      return Stack(
+        children: [
+          Container(
+            child: _cameraView,
+          ),
+          SizedBox(
+            height: 100,
+            child: ListView.builder(
+              itemBuilder: listItem,
+              itemCount: decodeRes.length,
+            ),
+          ),
+          Positioned(
+              bottom: 50,
+              left: 50,
+              right: 50,
+              child: SizedBox(
+                width: 64,
+                height: 64,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ResultScreen(
+                                results: _results,
+                              )),
+                    );
+                  },
+                  child: const Text('Done'),
+                ),
+              ))
+        ],
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    SwitchProvider switchProvider = Provider.of<SwitchProvider>(context);
+    return Scaffold(
+        appBar: AppBar(title: const Text('Batch/Inventory'), actions: [
+          IconButton(
+            icon: Switch(
+              value: switchProvider.switchValue,
+              onChanged: (newValue) {
+                switchProvider.switchValue = newValue;
+                setState(() {});
+
+                start();
+              },
+            ),
+            onPressed: () {},
+          ),
+        ]),
+        body: createSwitchWidget(switchProvider.switchValue));
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
-
     switch (state) {
       case AppLifecycleState.resumed:
-        _barcodeReader.startScanning();
-        _cameraEnhancer.open();
+        start();
         break;
       case AppLifecycleState.inactive:
-        _cameraEnhancer.close();
-        _barcodeReader.stopScanning();
+        stop();
         break;
       case AppLifecycleState.paused:
         // TODO: Handle this case.

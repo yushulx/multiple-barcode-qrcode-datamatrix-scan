@@ -13,7 +13,6 @@ class ResultScreen extends StatefulWidget {
 class _ResultScreenState extends State<ResultScreen> {
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Scaffold(
         appBar: AppBar(
           title: const Text('Scan Results'),
@@ -52,7 +51,7 @@ class _ResultScreenState extends State<ResultScreen> {
                 left: 50,
                 right: 50,
                 child: SizedBox(
-                  width: 64,
+                  width: MediaQuery.of(context).size.width * 0.5,
                   height: 64,
                   child: ElevatedButton(
                     onPressed: () {

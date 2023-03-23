@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'scanner_screen.dart';
 import 'settings_screen.dart';
+import 'switch_provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(ChangeNotifierProvider(
+      create: (_) => SwitchProvider(), child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
