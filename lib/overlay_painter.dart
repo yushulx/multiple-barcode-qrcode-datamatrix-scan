@@ -12,6 +12,10 @@ Widget createOverlay(List<BarcodeResult> results) {
 class OverlayPainter extends CustomPainter {
   final List<BarcodeResult> results;
 
+  // int rotate90(int y) {
+  //   return width - y;
+  // }
+
   OverlayPainter(this.results) {
     results.sort((a, b) {
       List<Point> aPoints = a.barcodeLocation.location.points;

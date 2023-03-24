@@ -41,6 +41,7 @@ dependencies:
   url_launcher: ^6.1.10
   share_plus: ^6.3.1
   image_picker: ^0.8.7
+  flutter_exif_rotation: ^0.5.1
 
 dev_dependencies:
   flutter_test:

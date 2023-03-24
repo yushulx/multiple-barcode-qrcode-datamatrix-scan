@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'history_view.dart';
-import 'result_screen.dart';
 import 'scan_provider.dart';
 import 'switch_provider.dart';
 
