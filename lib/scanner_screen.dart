@@ -2,6 +2,7 @@ import 'package:dynamsoft_capture_vision_flutter/dynamsoft_capture_vision_flutte
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'history_view.dart';
 import 'result_screen.dart';
 import 'scan_provider.dart';
 import 'switch_provider.dart';
@@ -41,15 +42,8 @@ class _ScannerScreenState extends State<ScannerScreen>
   }
 
   Future<void> _sdkInit() async {
-    ScanProvider _scanProvider =
-        Provider.of<ScanProvider>(context, listen: false);
+    _scanProvider = Provider.of<ScanProvider>(context, listen: false);
 
-    try {
-      await DCVBarcodeReader.initLicense(
-          'DLS2eyJoYW5kc2hha2VDb2RlIjoiMjAwMDAxLTE2NDk4Mjk3OTI2MzUiLCJvcmdhbml6YXRpb25JRCI6IjIwMDAwMSIsInNlc3Npb25QYXNzd29yZCI6IndTcGR6Vm05WDJrcEQ5YUoifQ==');
-    } catch (e) {
-      print(e);
-    }
     _barcodeReader = await DCVBarcodeReader.createInstance();
     _cameraEnhancer = await DCVCameraEnhancer.createInstance();
 
@@ -274,10 +268,12 @@ class _ScannerScreenState extends State<ScannerScreen>
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const ResultScreen()),
+                          builder: (context) => const HistoryView(
+                                title: 'Scan Results',
+                              )),
                     );
                   },
-                  child: const Text('Done'),
+                  child: const Text('Show Results'),
                 ),
               ))
         ],

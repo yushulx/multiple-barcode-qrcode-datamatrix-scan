@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'reader_screen.dart';
 import 'scan_provider.dart';
 import 'scanner_screen.dart';
 import 'settings_screen.dart';
@@ -15,13 +16,6 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
-  void _launchCamera() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => ScannerScreen()),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     ScanProvider scanProvider = Provider.of<ScanProvider>(context);
@@ -53,7 +47,11 @@ class _HomeViewState extends State<HomeView> {
                 alignment: Alignment.center,
                 child: ElevatedButton(
                   onPressed: () {
-                    _launchCamera();
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const ScannerScreen()),
+                    );
                   },
                   style: ElevatedButton.styleFrom(
                     minimumSize: const Size.square(
@@ -81,6 +79,50 @@ class _HomeViewState extends State<HomeView> {
                           padding: EdgeInsets.all(8.0),
                           child: Icon(
                             Icons.camera,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Container(
+                alignment: Alignment.center,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const ReaderScreen()),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: const Size.square(
+                        64), // Set the size of the button to be square
+                  ),
+                  child: Stack(
+                    children: const [
+                      Align(
+                        alignment: Alignment.center,
+                        child: Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text(
+                            'Image File Scan',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                      Align(
+                        alignment: Alignment.bottomRight,
+                        child: Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Icon(
+                            Icons.image,
                             color: Colors.white,
                           ),
                         ),
