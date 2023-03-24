@@ -110,6 +110,10 @@ class _ReaderScreenState extends State<ReaderScreen> {
                   await _imagePicker.pickImage(source: ImageSource.gallery);
 
               if (pickedFile != null) {
+                final image =
+                    await decodeImageFromList(await pickedFile.readAsBytes());
+                _width = image.width;
+                _height = image.height;
                 _file = pickedFile.path;
                 _results = await _barcodeReader.decodeFile(_file!) ?? [];
                 for (var i = 0; i < _results.length; i++) {

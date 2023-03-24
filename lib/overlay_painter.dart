@@ -16,7 +16,7 @@ class OverlayPainter extends CustomPainter {
   final int height;
 
   int rotate(int y) {
-    return height - y;
+    return width - y;
   }
 
   OverlayPainter(this.results, this.width, this.height) {
