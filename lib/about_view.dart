@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:inventoryscan/utils.dart';
+import 'utils.dart';
 
 class InfoView extends StatelessWidget {
   final String title;
