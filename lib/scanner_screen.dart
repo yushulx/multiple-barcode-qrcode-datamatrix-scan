@@ -1,16 +1,17 @@
 import 'package:dynamsoft_capture_vision_flutter/dynamsoft_capture_vision_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import 'result_screen.dart';
+import 'scan_provider.dart';
 import 'switch_provider.dart';
 
 import 'package:url_launcher/url_launcher_string.dart';
 
+import 'utils.dart';
+
 class ScannerScreen extends StatefulWidget {
-  int types = 0;
-  ScannerScreen({super.key, required this.types});
+  const ScannerScreen({super.key});
 
   @override
   State<ScannerScreen> createState() => _ScannerScreenState();
@@ -22,7 +23,6 @@ class _ScannerScreenState extends State<ScannerScreen>
   late final DCVBarcodeReader _barcodeReader;
 
   final DCVCameraView _cameraView = DCVCameraView();
-  Map<String, BarcodeResult> _results = {};
   List<BarcodeResult> decodeRes = [];
   String? resultText;
   bool faceLens = false;
@@ -31,6 +31,7 @@ class _ScannerScreenState extends State<ScannerScreen>
   bool _isScanning = true;
   String _scanButtonText = 'Stop Scanning';
   bool _isCameraReady = false;
+  late ScanProvider _scanProvider;
 
   @override
   void initState() {
@@ -40,6 +41,9 @@ class _ScannerScreenState extends State<ScannerScreen>
   }
 
   Future<void> _sdkInit() async {
+    ScanProvider _scanProvider =
+        Provider.of<ScanProvider>(context, listen: false);
+
     try {
       await DCVBarcodeReader.initLicense(
           'DLS2eyJoYW5kc2hha2VDb2RlIjoiMjAwMDAxLTE2NDk4Mjk3OTI2MzUiLCJvcmdhbml6YXRpb25JRCI6IjIwMDAwMSIsInNlc3Npb25QYXNzd29yZCI6IndTcGR6Vm05WDJrcEQ5YUoifQ==');
@@ -53,8 +57,9 @@ class _ScannerScreenState extends State<ScannerScreen>
     DBRRuntimeSettings currentSettings =
         await _barcodeReader.getRuntimeSettings();
     // Set the barcode format to read.
-    if (widget.types != 0) {
-      currentSettings.barcodeFormatIds = widget.types;
+
+    if (_scanProvider.types != 0) {
+      currentSettings.barcodeFormatIds = _scanProvider.types;
     } else {
       currentSettings.barcodeFormatIds = EnumBarcodeFormat.BF_ALL;
     }
@@ -95,10 +100,10 @@ class _ScannerScreenState extends State<ScannerScreen>
         for (var i = 0; i < decodeRes.length; i++) {
           msg += '${decodeRes[i].barcodeText}\n';
 
-          if (_results.containsKey(decodeRes[i].barcodeText)) {
+          if (_scanProvider.results.containsKey(decodeRes[i].barcodeText)) {
             continue;
           } else {
-            _results[decodeRes[i].barcodeText] = decodeRes[i];
+            _scanProvider.results[decodeRes[i].barcodeText] = decodeRes[i];
           }
         }
 
@@ -187,16 +192,7 @@ class _ScannerScreenState extends State<ScannerScreen>
                 MediaQuery.of(context).padding.top,
             color: Colors.white,
             child: Center(
-              child: ListView.builder(
-                  itemCount: _results.length,
-                  itemBuilder: (context, index) {
-                    return ListTile(
-                      title: createURLString(
-                          _results.values.elementAt(index).barcodeText),
-                      subtitle: Text(
-                          _results.values.elementAt(index).barcodeFormatString),
-                    );
-                  }),
+              child: createListView(context),
             ),
           ),
           if (_isScanning)
@@ -278,9 +274,7 @@ class _ScannerScreenState extends State<ScannerScreen>
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => ResultScreen(
-                                results: _results,
-                              )),
+                          builder: (context) => const ResultScreen()),
                     );
                   },
                   child: const Text('Done'),

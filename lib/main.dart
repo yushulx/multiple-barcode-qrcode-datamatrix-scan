@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'scanner_screen.dart';
-import 'settings_screen.dart';
+import 'about_view.dart';
+import 'history_view.dart';
+import 'home_view.dart';
+import 'scan_provider.dart';
 import 'switch_provider.dart';
 
 void main() {
-  runApp(ChangeNotifierProvider(
-      create: (_) => SwitchProvider(), child: const MyApp()));
+  runApp(MultiProvider(providers: [
+    ChangeNotifierProvider(create: (_) => SwitchProvider()),
+    ChangeNotifierProvider(create: (_) => ScanProvider()),
+  ], child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -20,54 +24,47 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
+  const MyHomePage({super.key});
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _types = 0;
-  void _launchCamera() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) => ScannerScreen(
-                types: _types,
-              )),
-    );
+class _MyHomePageState extends State<MyHomePage>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(vsync: this, length: 3);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.settings),
-            onPressed: () async {
-              var result = await Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const SettingsScreen()),
-              );
-              _types = result['format'];
-            },
-          ),
+      body: TabBarView(
+        controller: _tabController,
+        children: const [
+          HomeView(title: 'Dynamsoft Barcode SDK'),
+          HistoryView(title: 'History'),
+          InfoView(title: 'About the SDK'),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _launchCamera,
-        tooltip: 'Barcode Scanner',
-        child: const Icon(Icons.camera),
+      bottomNavigationBar: TabBar(
+        labelColor: Colors.blue,
+        controller: _tabController,
+        tabs: const [
+          Tab(icon: Icon(Icons.home), text: 'Home'),
+          Tab(icon: Icon(Icons.history_sharp), text: 'History'),
+          Tab(icon: Icon(Icons.info), text: 'About'),
+        ],
       ),
     );
   }
