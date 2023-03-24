@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dynamsoft_capture_vision_flutter/dynamsoft_capture_vision_flutter.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_exif_rotation/flutter_exif_rotation.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:inventoryscan/history_view.dart';
 import 'package:provider/provider.dart';
@@ -88,7 +89,9 @@ class _ReaderScreenState extends State<ReaderScreen> {
                     await decodeImageFromList(await pickedFile.readAsBytes());
                 _width = image.width;
                 _height = image.height;
-                _file = pickedFile.path;
+                final rotatedImage = await FlutterExifRotation.rotateImage(
+                    path: pickedFile.path);
+                _file = rotatedImage.path;
                 _results = await _barcodeReader.decodeFile(_file!) ?? [];
                 for (var i = 0; i < _results.length; i++) {
                   if (_scanProvider.results
@@ -114,7 +117,9 @@ class _ReaderScreenState extends State<ReaderScreen> {
                     await decodeImageFromList(await pickedFile.readAsBytes());
                 _width = image.width;
                 _height = image.height;
-                _file = pickedFile.path;
+                final rotatedImage = await FlutterExifRotation.rotateImage(
+                    path: pickedFile.path);
+                _file = rotatedImage.path;
                 _results = await _barcodeReader.decodeFile(_file!) ?? [];
                 for (var i = 0; i < _results.length; i++) {
                   if (_scanProvider.results
