@@ -60,19 +60,13 @@ class _ReaderScreenState extends State<ReaderScreen> {
   }
 
   Widget getImage() {
-    if (_file != null) {
-      Image image = kIsWeb
-          ? Image.network(
-              _file!,
-            )
-          : Image.file(
-              File(_file!),
-            );
-      return image;
-    }
-    return Image.asset(
-      'images/default.png',
-    );
+    return _file == null
+        ? Image.asset(
+            'images/default.png',
+          )
+        : Image.file(
+            File(_file!),
+          );
   }
 
   @override
@@ -83,6 +77,28 @@ class _ReaderScreenState extends State<ReaderScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.add_a_photo),
+            onPressed: () async {
+              XFile? pickedFile =
+                  await _imagePicker.pickImage(source: ImageSource.camera);
+
+              if (pickedFile != null) {
+                _file = pickedFile.path;
+                _results = await _barcodeReader.decodeFile(_file!) ?? [];
+                for (var i = 0; i < _results.length; i++) {
+                  if (_scanProvider.results
+                      .containsKey(_results[i].barcodeText)) {
+                    continue;
+                  } else {
+                    _scanProvider.results[_results[i].barcodeText] =
+                        _results[i];
+                  }
+                }
+                setState(() {});
+              }
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.file_open),
             onPressed: () async {
               XFile? pickedFile =
                   await _imagePicker.pickImage(source: ImageSource.gallery);

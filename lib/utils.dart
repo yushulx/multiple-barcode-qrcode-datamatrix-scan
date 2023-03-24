@@ -14,22 +14,20 @@ Widget createURLString(String text) {
   );
 
   if (urlRegExp.hasMatch(text)) {
-    return GestureDetector(
-      onLongPress: () async {
+    return InkWell(
+      onLongPress: () {
         Share.share(text, subject: 'Scan Result');
       },
-      child: InkWell(
-        child: Text(
-          text,
-          style: const TextStyle(color: Colors.blue),
-        ),
-        onTap: () async {
-          launchUrlString(text);
-        },
+      child: Text(
+        text,
+        style: const TextStyle(color: Colors.blue),
       ),
+      onTap: () async {
+        launchUrlString(text);
+      },
     );
   } else {
-    return GestureDetector(
+    return InkWell(
       onLongPress: () async {
         Share.share(text, subject: 'Scan Result');
       },
