@@ -47,42 +47,46 @@ class _HomeViewState extends State<HomeView> {
             crossAxisCount: 2, // set the number of columns to 2
             mainAxisSpacing: 16, // set the spacing between each row
             crossAxisSpacing: 16, // set the spacing between each column
+            padding: const EdgeInsets.all(16), // set the padding
             children: [
-              ElevatedButton(
-                onPressed: () {
-                  _launchCamera();
-                },
-                style: ElevatedButton.styleFrom(
-                  minimumSize: const Size.square(
-                      64), // Set the size of the button to be square
-                ),
-                child: Stack(
-                  children: const [
-                    Align(
-                      alignment: Alignment.center,
-                      child: Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text(
-                          'Inventory Scan',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
+              Container(
+                alignment: Alignment.center,
+                child: ElevatedButton(
+                  onPressed: () {
+                    _launchCamera();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: const Size.square(
+                        64), // Set the size of the button to be square
+                  ),
+                  child: Stack(
+                    children: const [
+                      Align(
+                        alignment: Alignment.center,
+                        child: Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text(
+                            'Inventory Scan',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    Align(
-                      alignment: Alignment.bottomRight,
-                      child: Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Icon(
-                          Icons.camera,
-                          color: Colors.white,
+                      Align(
+                        alignment: Alignment.bottomRight,
+                        child: Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Icon(
+                            Icons.camera,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
 
