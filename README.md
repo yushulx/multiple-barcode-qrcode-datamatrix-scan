@@ -19,4 +19,4 @@ A Flutter barcode scanner project for scanning multiple barcode, QR code and Dat
     flutter run
     ```
 
-    ![mobile multiple datamatrix scan](https://www.dynamsoft.com/codepool/img/2023/03/mobile-multiple-datamatrix-scan.jpg)
+    https://user-images.githubusercontent.com/2202306/227474774-d9f5f2c9-87d8-4e41-acfc-80725c8574a4.mp4
