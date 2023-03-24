@@ -39,6 +39,7 @@ dependencies:
   dynamsoft_capture_vision_flutter: ^1.2.2
   provider: ^6.0.5
   url_launcher: ^6.1.10
+  share_plus: ^6.3.1
 
 dev_dependencies:
   flutter_test:

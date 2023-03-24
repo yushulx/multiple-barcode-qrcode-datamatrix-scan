@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:inventoryscan/utils.dart';
 
 class InfoView extends StatelessWidget {
   final String title;
@@ -10,12 +11,12 @@ class InfoView extends StatelessWidget {
       appBar: AppBar(
         title: Text(title),
       ),
-      body: Stack(
-        children: const [
-          Align(
+      body: Column(
+        children: [
+          const Align(
             alignment: Alignment.topCenter,
             child: Padding(
-              padding: EdgeInsets.all(8.0),
+              padding: EdgeInsets.all(18.0),
               child: Text(
                 'With Dynamsoft Barcode Reader SDK, developers can easily transform mobile phones and tablets into enterprise-grade barcode scanning and data capture tools.',
                 style: TextStyle(
@@ -25,7 +26,15 @@ class InfoView extends StatelessWidget {
                 ),
               ),
             ),
-          )
+          ),
+          Align(
+            alignment: Alignment.topCenter,
+            child: Padding(
+              padding: const EdgeInsets.all(18.0),
+              child: createURLString(
+                  'https://www.dynamsoft.com/barcode-reader/sdk-mobile/'),
+            ),
+          ),
         ],
       ),
     );

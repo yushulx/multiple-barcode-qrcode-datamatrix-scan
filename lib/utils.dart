@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 import 'scan_provider.dart';
@@ -13,17 +14,27 @@ Widget createURLString(String text) {
   );
 
   if (urlRegExp.hasMatch(text)) {
-    return InkWell(
-      child: Text(
-        text,
-        style: const TextStyle(color: Colors.blue),
-      ),
-      onTap: () async {
-        launchUrlString(text);
+    return GestureDetector(
+      onLongPress: () async {
+        Share.share(text, subject: 'Scan Result');
       },
+      child: InkWell(
+        child: Text(
+          text,
+          style: const TextStyle(color: Colors.blue),
+        ),
+        onTap: () async {
+          launchUrlString(text);
+        },
+      ),
     );
   } else {
-    return Text(text);
+    return GestureDetector(
+      onLongPress: () async {
+        Share.share(text, subject: 'Scan Result');
+      },
+      child: Text(text),
+    );
   }
 }
 
