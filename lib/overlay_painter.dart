@@ -1,18 +1,25 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:dynamsoft_capture_vision_flutter/dynamsoft_capture_vision_flutter.dart';
 
-Widget createOverlay(List<BarcodeResult> results) {
+Widget createOverlay(List<BarcodeResult> results, int width, int height) {
   return CustomPaint(
-    painter: OverlayPainter(results),
+    painter: OverlayPainter(results, width, height),
   );
 }
 
 class OverlayPainter extends CustomPainter {
   final List<BarcodeResult> results;
+  final int width;
+  final int height;
 
-  OverlayPainter(this.results) {
+  int rotate(int y) {
+    return height - y;
+  }
+
+  OverlayPainter(this.results, this.width, this.height) {
     results.sort((a, b) {
       List<Point> aPoints = a.barcodeLocation.location.points;
       List<Point> bPoints = b.barcodeLocation.location.points;
@@ -95,14 +102,33 @@ class OverlayPainter extends CustomPainter {
       if (points[2].y < minY) minY = points[2].y.toDouble();
       if (points[3].y < minY) minY = points[3].y.toDouble();
 
-      canvas.drawLine(Offset(points[0].x.toDouble(), points[0].y.toDouble()),
-          Offset(points[1].x.toDouble(), points[1].y.toDouble()), paint);
-      canvas.drawLine(Offset(points[1].x.toDouble(), points[1].y.toDouble()),
-          Offset(points[2].x.toDouble(), points[2].y.toDouble()), paint);
-      canvas.drawLine(Offset(points[2].x.toDouble(), points[2].y.toDouble()),
-          Offset(points[3].x.toDouble(), points[3].y.toDouble()), paint);
-      canvas.drawLine(Offset(points[3].x.toDouble(), points[3].y.toDouble()),
-          Offset(points[0].x.toDouble(), points[0].y.toDouble()), paint);
+      if (Platform.isIOS) {
+        canvas.drawLine(
+            Offset(rotate(points[0].y).toDouble(), points[0].x.toDouble()),
+            Offset(rotate(points[1].y).toDouble(), points[1].x.toDouble()),
+            paint);
+        canvas.drawLine(
+            Offset(rotate(points[1].y).toDouble(), points[1].x.toDouble()),
+            Offset(rotate(points[2].y).toDouble(), points[2].x.toDouble()),
+            paint);
+        canvas.drawLine(
+            Offset(rotate(points[2].y).toDouble(), points[2].x.toDouble()),
+            Offset(rotate(points[3].y).toDouble(), points[3].x.toDouble()),
+            paint);
+        canvas.drawLine(
+            Offset(rotate(points[3].y).toDouble(), points[3].x.toDouble()),
+            Offset(rotate(points[0].y).toDouble(), points[0].x.toDouble()),
+            paint);
+      } else {
+        canvas.drawLine(Offset(points[0].x.toDouble(), points[0].y.toDouble()),
+            Offset(points[1].x.toDouble(), points[1].y.toDouble()), paint);
+        canvas.drawLine(Offset(points[1].x.toDouble(), points[1].y.toDouble()),
+            Offset(points[2].x.toDouble(), points[2].y.toDouble()), paint);
+        canvas.drawLine(Offset(points[2].x.toDouble(), points[2].y.toDouble()),
+            Offset(points[3].x.toDouble(), points[3].y.toDouble()), paint);
+        canvas.drawLine(Offset(points[3].x.toDouble(), points[3].y.toDouble()),
+            Offset(points[0].x.toDouble(), points[0].y.toDouble()), paint);
+      }
 
       TextPainter numberPainter = TextPainter(
         text: TextSpan(

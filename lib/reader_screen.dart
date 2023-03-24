@@ -24,6 +24,8 @@ class _ReaderScreenState extends State<ReaderScreen> {
   List<BarcodeResult> _results = [];
   late final DCVBarcodeReader _barcodeReader;
   late ScanProvider _scanProvider;
+  int _width = 0;
+  int _height = 0;
 
   @override
   void initState() {
@@ -82,6 +84,10 @@ class _ReaderScreenState extends State<ReaderScreen> {
                   await _imagePicker.pickImage(source: ImageSource.camera);
 
               if (pickedFile != null) {
+                final image =
+                    await decodeImageFromList(await pickedFile.readAsBytes());
+                _width = image.width;
+                _height = image.height;
                 _file = pickedFile.path;
                 _results = await _barcodeReader.decodeFile(_file!) ?? [];
                 for (var i = 0; i < _results.length; i++) {
@@ -151,7 +157,7 @@ class _ReaderScreenState extends State<ReaderScreen> {
                                     ),
                                   ),
                                 ))
-                            : createOverlay(_results),
+                            : createOverlay(_results, _width, _height),
                       ),
                     ],
                   ),
